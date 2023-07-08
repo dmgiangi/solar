@@ -1,4 +1,18 @@
-spring:
-  docker:
-    compose:
-      lifecycle-management: start-and-stop
+relays:
+  pin:
+    thermo-integration: 17
+    solar-pump: 27
+    thermo-valve: 22
+    fan-coil-1: 23
+    fan-coil-2: 24
+    fan-coil-3: 25
+    unused-1: 5
+    unused-2: 6
+probes:
+  address:
+    solar-in: 28-000f98431502
+    solar-out: 28-00ff9843111b
+    thermo-fire-place: 28-000f9843076d
+    boiler-up: 28-000b984307bf
+    boiler-middle: 28-001898430662
+    boiler-low: 28-001898430662
