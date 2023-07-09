@@ -1,6 +1,6 @@
 package dev.dmgiangi.solar.relay;
 
-import com.pi4j.io.gpio.digital.DigitalOutput;
+import dev.dmgiangi.solar.output.DigitalOutput;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -24,24 +24,24 @@ public class FanCoilService {
     public void setStatus(@NonNull FanCoilStatus status){
         switch (status){
             case ONE:
-                fanCoil2.high();
-                fanCoil3.high();
-                fanCoil1.low();
+                fanCoil2.on();
+                fanCoil3.on();
+                fanCoil1.off();
                 break;
             case TWO:
-                fanCoil1.high();
-                fanCoil3.high();
-                fanCoil2.low();
+                fanCoil1.on();
+                fanCoil3.on();
+                fanCoil2.off();
                 break;
             case THREE:
-                fanCoil2.high();
-                fanCoil1.high();
-                fanCoil3.low();
+                fanCoil2.on();
+                fanCoil1.on();
+                fanCoil3.off();
                 break;
             case OFF:
-                fanCoil2.high();
-                fanCoil3.high();
-                fanCoil1.high();
+                fanCoil2.on();
+                fanCoil3.on();
+                fanCoil1.on();
         }
     }
 }

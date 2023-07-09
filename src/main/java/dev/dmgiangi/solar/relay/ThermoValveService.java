@@ -1,6 +1,6 @@
 package dev.dmgiangi.solar.relay;
 
-import com.pi4j.io.gpio.digital.DigitalOutput;
+import dev.dmgiangi.solar.output.DigitalOutput;
 import dev.dmgiangi.solar.probe.ProbesService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

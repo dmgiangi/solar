@@ -17,10 +17,6 @@ probes:
     boiler-middle: 28-001898430662
     boiler-low: 28-001898430662
 
-pi4j:
-  library:
-    path: /tmp
-
 spring:
   main:
     banner-mode: off

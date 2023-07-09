@@ -17,7 +17,7 @@ public class ProbeDecoupler {
 
     private final List<Probe> addresses;
     private final NotificationService notificationService;
-
+    private final ProbeReader probeReader;
     public Double getValue(Probe probe) {
         return values.get(probe.getAddress());
     }
@@ -29,7 +29,7 @@ public class ProbeDecoupler {
         addresses
                 .forEach(probe -> {
                     try {
-                        values.put(probe.getAddress(), ProbeReader.getValue(probe));
+                        values.put(probe.getAddress(), probeReader.getValue(probe));
                     } catch (OneWireProbeException e) {
                         errors.put(probe, e);
                     }

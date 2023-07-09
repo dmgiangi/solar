@@ -1,96 +1,101 @@
 package dev.dmgiangi.solar.configuration;
 
-import com.pi4j.Pi4J;
-import com.pi4j.context.Context;
-import com.pi4j.io.IOType;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalOutputConfig;
-import com.pi4j.io.gpio.digital.DigitalOutputProvider;
-import com.pi4j.io.gpio.digital.DigitalState;
-import com.pi4j.platform.Platform;
+import dev.dmgiangi.solar.output.*;
+import dev.dmgiangi.solar.probe.FileSystemProbeReader;
+import dev.dmgiangi.solar.probe.MockProbeReader;
 import dev.dmgiangi.solar.probe.Probe;
+import dev.dmgiangi.solar.probe.ProbeReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class Pi4jConfiguration {
     @Bean
-    public Context pi4j() {
-        return Pi4J.newAutoContext();
+    @Profile("default")
+    public OutputProvider productionProvider(){
+        return new FileSystemOutputProvider();
     }
 
     @Bean
-    public Platform platform(Context context) {
-        return context.platforms().getDefault();
+    @Profile("dev")
+    public OutputProvider devProvider(){
+        return new ConsoleOutputProvider();
     }
 
     @Bean
-    public DigitalOutputProvider digitalOutputProvider(Platform platform) {
-        return platform.provider(IOType.DIGITAL_OUTPUT);
-    }
-
-    @Bean
-    public DigitalOutput fanCoil1(Context context,
+    public DigitalOutput fanCoil1(OutputProvider provider,
                                   @Value("${relays.pin.fan-coil-1}") int pinNumber) {
-        return getDigitalOutput(context, "FAN COIL 1", pinNumber);
+        return getDigitalOutput(provider, "FAN COIL 1", pinNumber);
     }
 
     @Bean
-    public DigitalOutput fanCoil2(Context context,
+    public DigitalOutput fanCoil2(OutputProvider provider,
                                   @Value("${relays.pin.fan-coil-2}") int pinNumber) {
-        return getDigitalOutput(context, "FAN COIL 2", pinNumber);
+        return getDigitalOutput(provider, "FAN COIL 2", pinNumber);
     }
 
     @Bean
-    public DigitalOutput fanCoil3(Context context,
+    public DigitalOutput fanCoil3(OutputProvider provider,
                                   @Value("${relays.pin.fan-coil-3}") int pinNumber) {
-        return getDigitalOutput(context, "FAN COIL 3", pinNumber);
+        return getDigitalOutput(provider, "FAN COIL 3", pinNumber);
     }
 
     @Bean
-    public DigitalOutput thermoValve(Context context,
+    public DigitalOutput thermoValve(OutputProvider provider,
                                      @Value("${relays.pin.thermo-valve}") int pinNumber) {
-        return getDigitalOutput(context, "THERMO VALVE", pinNumber);
+        return getDigitalOutput(provider, "THERMO VALVE", pinNumber);
     }
 
     @Bean
-    public DigitalOutput solarPump(Context context,
+    public DigitalOutput solarPump(OutputProvider provider,
                                    @Value("${relays.pin.solar-pump}") int pinNumber) {
-        return getDigitalOutput(context, "SOLAR PUMP", pinNumber);
+        return getDigitalOutput(provider, "SOLAR PUMP", pinNumber);
     }
 
     @Bean
-    public DigitalOutput thermoIntegration(Context context,
+    public DigitalOutput thermoIntegration(OutputProvider provider,
                                            @Value("${relays.pin.thermo-integration}") int pinNumber) {
-        return getDigitalOutput(context, "THERMO INTEGRATION", pinNumber);
+        return getDigitalOutput(provider, "THERMO INTEGRATION", pinNumber);
     }
 
     @Bean
-    public DigitalOutput unused1(Context context,
+    public DigitalOutput unused1(OutputProvider provider,
                                  @Value("${relays.pin.unused-1}") int pinNumber) {
-        return getDigitalOutput(context, "UNUSED 1", pinNumber);
+        return getDigitalOutput(provider, "UNUSED 1", pinNumber);
     }
 
     @Bean
-    public DigitalOutput unused2(Context context,
+    public DigitalOutput unused2(OutputProvider provider,
                                  @Value("${relays.pin.unused-2}") int pinNumber) {
-        return getDigitalOutput(context, "UNUSED 2", pinNumber);
+        return getDigitalOutput(provider, "UNUSED 2", pinNumber);
     }
 
-    private static DigitalOutput getDigitalOutput(Context context,
-                                                  String name,
-                                                  int pinNumber) {
-        DigitalOutputConfig config = DigitalOutput
-                .newConfigBuilder(context)
-                .name(name)
-                .address(pinNumber)
-                .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output")
-                .build();
+    private static DigitalOutput getDigitalOutput(
+            OutputProvider provider,
+            String name,
+            int pinNumber) {
+        return new DigitalOutput(
+                name,
+                pinNumber,
+                provider,
+                OutputState.OFF,
+                OutputState.OFF,
+                true
+        );
+    }
 
-        return context.create(config);
+    @Bean
+    @Profile("default")
+    public ProbeReader productionProbeReader(){
+        return new FileSystemProbeReader();
+    }
+
+    @Bean
+    @Profile("dev")
+    public ProbeReader devProbeReader(){
+        return new MockProbeReader();
     }
 
     @Bean
