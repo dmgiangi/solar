@@ -82,7 +82,7 @@ public class Pi4jConfiguration {
                 provider,
                 OutputState.OFF,
                 OutputState.OFF,
-                true
+                false
         );
     }
 

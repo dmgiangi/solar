@@ -16,15 +16,16 @@ public class FileSystemOutputProvider implements OutputProvider {
     private static final String ROOT = "/sys/class/gpio/";
     private static final String EXPORT = ROOT + "export";
     private static final String PIN_FOLDER = ROOT + "gpio%d";
-    private static final String ACTIVE_LOW = PIN_FOLDER + "/active_low";
-    private static final String VALUE = PIN_FOLDER + "/value";
-
-    private static final String DIRECTION = PIN_FOLDER + "/direction";
+    private static final String ACTIVE_LOW = "/active_low";
+    private static final String VALUE = "/value";
+    private static final String DIRECTION = "/direction";
     private static final Map<Integer, String> endStatuses = new HashMap<>();
+    public static final String OUT = "out";
 
     @Override
     public void set(DigitalOutput digitalOutput, OutputState state) {
-        final String path = String.format(VALUE, digitalOutput.getPinNumber());
+        final int pinNumber = digitalOutput.getPinNumber();
+        final String path = String.format(PIN_FOLDER + VALUE, pinNumber);
         final String status = mapOutputState(digitalOutput.isActiveLow(), state);
         write(path, status);
     }
@@ -40,14 +41,26 @@ public class FileSystemOutputProvider implements OutputProvider {
         if (pinIsNotActive(pinNumber))
             write(EXPORT, String.valueOf(pinNumber));
 
-        write(String.format(DIRECTION, pinNumber), "out");
+        final String pinFolder = String.format(PIN_FOLDER, pinNumber);
 
-        final String activeLowValue = mapActiveLow(isActiveLow);
+        final String actualDirection = read(pinFolder + DIRECTION);
+        if(notStartWith(actualDirection, OUT))
+            write(pinFolder + DIRECTION, OUT);
 
-        write(String.format(ACTIVE_LOW, pinNumber), activeLowValue);
+        final String desiredActiveLowValue = mapActiveLow(isActiveLow);
+        final String actualActiveLowValue = read(pinFolder + ACTIVE_LOW);
+        if (notStartWith(actualActiveLowValue, desiredActiveLowValue))
+            write(pinFolder + ACTIVE_LOW, desiredActiveLowValue);
 
-        final String initStatus = mapOutputState(isActiveLow, digitalOutput.getInitState());
-        write(String.format(VALUE, pinNumber), initStatus);
+        final String desiredState = mapOutputState(isActiveLow, digitalOutput.getInitState());
+        final String actualState = read(pinFolder + VALUE);
+        if(notStartWith(actualState, desiredState))
+            write(pinFolder + VALUE, desiredState);
+    }
+
+    private boolean notStartWith(String string, String match) {
+        return string == null
+                || !string.startsWith(match);
     }
 
     private String mapOutputState(boolean activeLow, OutputState state) {
@@ -67,14 +80,14 @@ public class FileSystemOutputProvider implements OutputProvider {
     }
 
     private String mapActiveLow(boolean isActiveLow) {
-        return isActiveLow ? "1" : "0";
+        return isActiveLow ? "0" : "1";
     }
 
     @PreDestroy
     public void setEndStatus() {
         endStatuses
                 .forEach((key, value) -> write(
-                        String.format(VALUE, key),
+                        String.format(PIN_FOLDER + VALUE, key),
                         value));
     }
 
@@ -96,6 +109,16 @@ public class FileSystemOutputProvider implements OutputProvider {
             return !Files.exists(path);
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    private String read(String file) {
+        try {
+            Path path = Path.of(file);
+            return Files.readString(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new GpioResourcesAccssException(e);
         }
     }
 }
