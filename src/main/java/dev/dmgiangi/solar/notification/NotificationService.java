@@ -1,7 +1,7 @@
 package dev.dmgiangi.solar.notification;
 
-import dev.dmgiangi.solar.probe.Probe;
-import dev.dmgiangi.solar.probe.exception.OneWireProbeException;
+import dev.dmgiangi.solar.input.one_wire.Probe;
+import dev.dmgiangi.solar.input.one_wire.exception.OneWireProbeException;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

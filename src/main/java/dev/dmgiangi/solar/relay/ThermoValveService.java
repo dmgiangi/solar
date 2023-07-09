@@ -1,7 +1,7 @@
 package dev.dmgiangi.solar.relay;
 
+import dev.dmgiangi.solar.input.one_wire.ProbesService;
 import dev.dmgiangi.solar.output.DigitalOutput;
-import dev.dmgiangi.solar.probe.ProbesService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
-package dev.dmgiangi.solar.probe;
+package dev.dmgiangi.solar.input.one_wire;
 
+import dev.dmgiangi.solar.input.one_wire.exception.OneWireProbeException;
 import dev.dmgiangi.solar.notification.NotificationService;
-import dev.dmgiangi.solar.probe.exception.OneWireProbeException;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

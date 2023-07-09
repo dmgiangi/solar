@@ -42,6 +42,9 @@ echo 6 > /sys/class/gpio/export
 echo 'out' > /sys/class/gpio/gpio6/direction
 echo 1 > /sys/class/gpio/gpio6/active_low
 echo 0 >/sys/class/gpio/gpio6/value
+
+echo 2 > /sys/class/gpio/export
+echo 'in' > /sys/class/gpio/gpio2/direction
 ```
 ### Install needed package
 you need to install docker on rpi 

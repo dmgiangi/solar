@@ -23,7 +23,7 @@ public class FileSystemOutputProvider implements OutputProvider {
     public static final String OUT = "out";
 
     @Override
-    public void set(DigitalOutput digitalOutput, OutputState state) {
+    public void set(DigitalOutput digitalOutput, DigitalState state) {
         final int pinNumber = digitalOutput.getPinNumber();
         final String path = String.format(PIN_FOLDER + VALUE, pinNumber);
         final String status = mapOutputState(digitalOutput.isActiveLow(), state);
@@ -54,7 +54,7 @@ public class FileSystemOutputProvider implements OutputProvider {
 
         final String desiredState = mapOutputState(isActiveLow, digitalOutput.getInitState());
         final String actualState = read(pinFolder + VALUE);
-        if(notStartWith(actualState, desiredState))
+        if (notStartWith(actualState, desiredState))
             write(pinFolder + VALUE, desiredState);
     }
 
@@ -63,13 +63,13 @@ public class FileSystemOutputProvider implements OutputProvider {
                 || !string.startsWith(match);
     }
 
-    private String mapOutputState(boolean activeLow, OutputState state) {
-        final boolean mappedState = (activeLow && OutputState.OFF.equals(state))
-                || (!activeLow && OutputState.ON.equals(state));
+    private String mapOutputState(boolean activeLow, DigitalState state) {
+        final boolean mappedState = (activeLow && DigitalState.OFF.equals(state))
+                || (!activeLow && DigitalState.ON.equals(state));
 
         final String isActiveLow = activeLow ? "LOW" : "HIGH";
 
-        log.info("Mapping Output State digital output is active {} the required state is {} the computed value is {}",
+        log.trace("Mapping Output State digital output is active {} the required state is {} the computed value is {}",
                 isActiveLow,
                 state,
                 mappedState);
@@ -94,11 +94,11 @@ public class FileSystemOutputProvider implements OutputProvider {
     private void write(String file, String value) {
         try {
             Path path = Path.of(file);
-            log.info("WRITING ON {} value {}", file, value);
+            log.trace("WRITING ON {} value {}", file, value);
             Files.write(path, value.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new GpioResourcesAccssException(e);
+            throw new GpioResourcesAccessException("", e);
         }
     }
 
@@ -118,7 +118,7 @@ public class FileSystemOutputProvider implements OutputProvider {
             return Files.readString(path);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new GpioResourcesAccssException(e);
+            throw new GpioResourcesAccessException("", e);
         }
     }
 }

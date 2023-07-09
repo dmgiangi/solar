@@ -1,6 +1,6 @@
-package dev.dmgiangi.solar.probe.exception;
+package dev.dmgiangi.solar.input.one_wire.exception;
 
-import dev.dmgiangi.solar.probe.Probe;
+import dev.dmgiangi.solar.input.one_wire.Probe;
 
 public class ProbeNotFoundException extends OneWireProbeException {
     private static final long serialVersionUID = 7733973752438296181L;

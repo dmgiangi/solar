@@ -1,9 +1,9 @@
-package dev.dmgiangi.solar.probe;
+package dev.dmgiangi.solar.input.one_wire;
 
-import dev.dmgiangi.solar.probe.exception.ProbeChecksumException;
-import dev.dmgiangi.solar.probe.exception.ProbeFileMalformedException;
-import dev.dmgiangi.solar.probe.exception.ProbeNotFoundException;
-import dev.dmgiangi.solar.probe.exception.ProbeValueException;
+import dev.dmgiangi.solar.input.one_wire.exception.ProbeChecksumException;
+import dev.dmgiangi.solar.input.one_wire.exception.ProbeFileMalformedException;
+import dev.dmgiangi.solar.input.one_wire.exception.ProbeNotFoundException;
+import dev.dmgiangi.solar.input.one_wire.exception.ProbeValueException;
 
 import java.io.IOException;
 import java.nio.file.Files;

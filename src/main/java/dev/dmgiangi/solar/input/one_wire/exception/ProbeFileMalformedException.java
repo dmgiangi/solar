@@ -1,7 +1,6 @@
-package dev.dmgiangi.solar.probe.exception;
+package dev.dmgiangi.solar.input.one_wire.exception;
 
-import dev.dmgiangi.solar.probe.Probe;
-import dev.dmgiangi.solar.probe.exception.OneWireProbeException;
+import dev.dmgiangi.solar.input.one_wire.Probe;
 
 public class ProbeFileMalformedException extends OneWireProbeException {
     private static final long serialVersionUID = -6109873934729765599L;

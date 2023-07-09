@@ -7,24 +7,16 @@ public class DigitalOutput {
     private final String name;
     private final int pinNumber;
     private final OutputProvider outputProvider;
-    private final OutputState initState;
-    private final OutputState endState;
+    private final DigitalState initState;
+    private final DigitalState endState;
     private final boolean activeLow;
-
-    public void on() {
-        outputProvider.set(this, OutputState.OFF);
-    }
-
-    public void off() {
-        outputProvider.set(this, OutputState.OFF);
-    }
 
     public DigitalOutput(
             String name,
             int pinNumber,
             OutputProvider outputProvider,
-            OutputState initState,
-            OutputState endState,
+            DigitalState initState,
+            DigitalState endState,
             boolean activeLow) {
         this.name = name;
         this.pinNumber = pinNumber;
@@ -34,5 +26,13 @@ public class DigitalOutput {
         this.activeLow = activeLow;
 
         outputProvider.init(this);
+    }
+
+    public void on() {
+        outputProvider.set(this, DigitalState.ON);
+    }
+
+    public void off() {
+        outputProvider.set(this, DigitalState.OFF);
     }
 }

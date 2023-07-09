@@ -1,6 +1,6 @@
 package dev.dmgiangi.solar.output;
 
-public enum OutputState {
+public enum DigitalState {
     ON,
     OFF
 }

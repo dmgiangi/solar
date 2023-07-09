@@ -1,6 +1,5 @@
-package dev.dmgiangi.solar.probe;
+package dev.dmgiangi.solar.input.one_wire;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
