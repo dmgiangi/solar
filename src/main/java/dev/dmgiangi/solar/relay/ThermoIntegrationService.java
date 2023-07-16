@@ -5,7 +5,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ThermoIntegrationService {
+public class ThermoIntegrationService implements RelayService {
+    @Override
+    public void compute() {
+
+    }
+
     private final DigitalOutput thermoIntegration;
 
     public ThermoIntegrationService(@Qualifier("thermoIntegration") DigitalOutput thermoIntegration) {

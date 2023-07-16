@@ -1,22 +1,14 @@
 package dev.dmgiangi.solar.configuration;
 
-import dev.dmgiangi.solar.input.digital.DigitalInput;
-import dev.dmgiangi.solar.input.digital.DigitalInputReader;
-import dev.dmgiangi.solar.input.digital.FanCoilSwitchDigitalInput;
 import dev.dmgiangi.solar.input.one_wire.FileSystemProbeReader;
 import dev.dmgiangi.solar.input.one_wire.MockProbeReader;
 import dev.dmgiangi.solar.input.one_wire.Probe;
 import dev.dmgiangi.solar.input.one_wire.ProbeReader;
-import dev.dmgiangi.solar.notification.NotificationService;
 import dev.dmgiangi.solar.output.*;
-import dev.dmgiangi.solar.relay.FanCoilService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
-import java.time.Duration;
-import java.util.List;
 
 @Configuration
 public class InputOutputConfiguration {
@@ -32,21 +24,6 @@ public class InputOutputConfiguration {
                 DigitalState.OFF,
                 false
         );
-    }
-
-    @Bean
-    public DigitalInput digitalInput(
-            NotificationService notificationService,
-            FanCoilService fanCoilService,
-            @Value("${input.digital.fan-coil-switch}") int pinNumber) {
-        return new FanCoilSwitchDigitalInput("FAN COIL SWITCH", pinNumber, notificationService, fanCoilService);
-    }
-
-    @Bean
-    public DigitalInputReader digitalInputReader(List<DigitalInput> digitalInputs) {
-        return new DigitalInputReader(
-                digitalInputs,
-                Duration.ofMillis(40));
     }
 
     @Bean

@@ -6,7 +6,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ThermoValveService {
+public class ThermoValveService implements RelayService {
+    @Override
+    public void compute() {
+
+    }
+
     private final DigitalOutput thermoValve;
     private final ProbesService probesService;
 
