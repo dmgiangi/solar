@@ -6,6 +6,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Component
 public class ProbesService {
@@ -17,6 +20,7 @@ public class ProbesService {
     private final Probe boilerUp;
     private final Probe boilerMiddle;
     private final Probe boilerLow;
+    private final List<Probe> probes;
 
     public ProbesService(
             @Qualifier("solarIn") Probe solarIn,
@@ -33,6 +37,7 @@ public class ProbesService {
         this.boilerMiddle = boilerMiddle;
         this.boilerLow = boilerLow;
         this.decoupler = decoupler;
+        this.probes = List.of(solarIn, solarOut, thermoFirePlace, boilerUp, boilerMiddle, boilerLow);
     }
 
     public Double getSolarIn() {
@@ -62,5 +67,12 @@ public class ProbesService {
     @Nullable
     private Double getProbeValue(@NonNull Probe probe) {
         return decoupler.getValue(probe);
+    }
+
+    public List<ProbeStatus> getProbeStatuses() {
+        return probes
+                .stream()
+                .map(probe -> new ProbeStatus(probe.getName(), getProbeValue(probe)))
+                .collect(Collectors.toList());
     }
 }

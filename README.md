@@ -50,19 +50,32 @@ echo 'in' > /sys/class/gpio/gpio2/direction
 you need to install docker on rpi 
 ```shell
 sudo curl -sL get.docker.com | bash
+sudo apt install python3-pip pigpio
+sudo pip install --system pigpio
+sudo systemctl enable pigpiod
 ```
 
 ### place the services on the filesystem
 Place the file in the following way (we assume that the home directory is /home/giangi).\
 Please consider to change the redis password from the docker compose found in thi project in the infrastructure folder
+
 ```text
 ~/ _
     |_ infrastructure/
+      |_ listener.py
       |_ redis-data/
       |_ docker.compose.yml
 ```
+
 ### Create the systemd service starter
-Create a file named /etc/systemd/system/infrastructure.service
+
+Create a file named /etc/systemd/system/infrastructure.service with the command:
+
+```shell
+sudo nano /etc/systemd/system/infrastructure.service
+```
+
+with the following content:
 
 ```shell
 [Unit]
@@ -79,9 +92,39 @@ RestartSec=10
 [Install]
 WantedBy=multi-user.target
 ```
+
 start and enable the services
 
 ```shell
 sudo systemctl enable infrastructure
 sudo systemctl start infrastructure
+```
+
+create a file named with:
+
+ ```shell
+sudo nano /etc/systemd/system/gpio_rest.service
+```
+
+that contain the following code:
+
+```shell
+[Unit]
+Description=GPIO REST Script Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/giangi/infrastructure/listener.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+start and enable the services
+
+```shell
+sudo systemctl enable gpio_rest
+sudo systemctl start gpio_rest
 ```

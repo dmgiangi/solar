@@ -37,18 +37,25 @@ public class FanCoilService implements RelayService {
     }
 
     @Override
+    public RelayStatus getStatus() {
+        return new RelayStatus("Fan Coil", actual.name(), enabled);
+    }
+
+    @Override
     public void compute() {
+        boolean previousEnabled = enabled;
         final Double thermoFirePlace = probesService.getThermoFirePlace();
 
-        if (thermoFirePlace > 52) {
+        if (thermoFirePlace > 53) {
             enabled = true;
             setStatus(actual);
-        } else if (thermoFirePlace < 50) {
+        } else if (thermoFirePlace < 51) {
             setStatus(FanCoilStatus.OFF);
             enabled = false;
         }
 
-        redisStatusService.setFanCoilEnabled(enabled);
+        if (previousEnabled != enabled)
+            redisStatusService.setFanCoilEnabled(enabled);
     }
 
     private void setStatus(@NonNull FanCoilStatus status) {
@@ -102,6 +109,7 @@ public class FanCoilService implements RelayService {
 
         redisStatusService.setFanCoilStatus(actual);
 
-        this.setStatus(actual);
+        if (enabled)
+            this.setStatus(actual);
     }
 }
