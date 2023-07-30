@@ -107,6 +107,7 @@ public class FanCoilService implements RelayService {
                 break;
         }
 
+        log.info("saving new fan coil status {}", actual);
         redisStatusService.setFanCoilStatus(actual);
 
         if (enabled)

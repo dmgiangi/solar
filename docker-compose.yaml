@@ -1,0 +1,88 @@
+version: "3.9"
+
+services:
+
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.inse="
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=dmgiangi@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.http.routers.traefik-ui.rule=Host(`traefik.dmgiangi.dev`)"
+      - "traefik.http.routers.traefik-ui.entrypoints=websecure"
+      - "traefik.http.routers.traefik-ui.service=api@internal"
+      - ""
+
+  hacking:
+    image: "giangi/hacking-tool"
+    container_name: "hacking-tool"
+    labels:
+      - "traefik.http.routers.myweb.rule=Host(`myweb.example.com`)"
+      - "traefik.http.routers.myweb.tls=true"
+      - "traefik.http.routers.myweb.tls.certresolver=myresolver"
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: |
+      redis-server
+      --save 20 10
+      --loglevel warning
+      --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - ./redis-data:/data
+
+  insight:
+    image: redislabs/redisinsight:latest
+    container_name: insight
+    networks:
+      - traefik_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.insight.rule=Host(`insight.dmgiangi.dev`)"
+      - "traefik.http.routers.insight.entrypoints=websecure"
+      - "traefik.http.routers.insight.tls.certresolver=myresolver"
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    ports:
+      - "27017:27017"
+
+  express:
+    image: mongo-express:latest
+    container_name: express
+    restart: always
+    ports:
+      - "8082:8081"
+    networks:
+      - traefik_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.express.rule=Host(`express.dmgiangi.dev`)"
+      - "traefik.http.routers.express.entrypoints=websecure"
+      - "traefik.http.routers.express.tls.certresolver=myresolver"
+
+networks:
+  traefik_network:
+    external: true
+

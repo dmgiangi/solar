@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Status Streaming with EventSource</title>
+</head>
+<body>
+<h1>Status Streaming with EventSource</h1>
+<div id="statusContainer">
+    <!-- I risultati verranno visualizzati qui -->
+</div>
+
+<script>
+    // Funzione per aggiornare i valori sulla pagina
+    function updateStatus(statusData) {
+        const statusContainer = document.getElementById("statusContainer");
+        statusContainer.innerHTML = ""; // Puliamo il contenuto precedente
+
+        // Aggiungiamo i valori ricevuti dalla risposta JSON al contenitore
+        statusData.relayStatus.forEach(relay => {
+            statusContainer.innerHTML += `<p>${relay.name}(${relay.status}): ${relay.status}</p>`;
+        });
+
+        statusData.probeStatuses.forEach(probe => {
+            statusContainer.innerHTML += `<p>${probe.name}: ${probe.temp} C</p>`;
+        });
+    }
+
+    // Funzione per effettuare la chiamata all'endpoint utilizzando EventSource
+    function fetchDataWithEventSource() {
+        const endpointUrl = 'http://solar.local:8080/status';
+        const eventSource = new EventSource(endpointUrl);
+
+        // Gestiamo gli eventi ricevuti dallo stream
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            updateStatus(data); // Aggiorniamo i valori sulla pagina quando arrivano nuovi dati
+        };
+
+        // Gestiamo gli errori
+        eventSource.onerror = (error) => {
+            console.error('Errore durante la connessione:', error);
+        };
+    }
+
+    // Avviamo la connessione all'endpoint utilizzando EventSource
+    fetchDataWithEventSource();
+</script>
+</body>
+</html>

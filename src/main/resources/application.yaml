@@ -1,14 +1,12 @@
 input:
-  digital:
-    fan-coil-switch: 2
   one-wire:
     addresses:
-      solar-in: 28-000f98431502
-      solar-out: 28-00ff9843111b
-      thermo-fire-place: 28-000f9843076d
-      boiler-up: 28-000b984307bf
+      solar-in: 28-00ff9843111b
+      solar-out: 28-000f9843076d
+      thermo-fire-place: 28-000b984307bf
+      boiler-up: 28-000f98431502
       boiler-middle: 28-001898430662
-      boiler-low: 28-001898430662
+      boiler-low: 28-000b98430f0a
 output:
   digital:
     pin:

@@ -26,9 +26,10 @@ public class SolarPumpService implements RelayService {
         if (boilerMiddle + 5.0 < min) {
             status = "On";
             solarPump.on();
-        } else if (boilerMiddle > min)
+        } else if (boilerMiddle > min) {
             status = "Off";
-        solarPump.off();
+            solarPump.off();
+        }
     }
 
     @Override

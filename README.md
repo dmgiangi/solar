@@ -47,7 +47,8 @@ echo 2 > /sys/class/gpio/export
 echo 'in' > /sys/class/gpio/gpio2/direction
 ```
 ### Install needed package
-you need to install docker on rpi 
+you need to install some tool on rpi
+
 ```shell
 sudo curl -sL get.docker.com | bash
 sudo apt install python3-pip pigpio
