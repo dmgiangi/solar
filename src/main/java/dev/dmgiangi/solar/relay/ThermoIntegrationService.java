@@ -30,7 +30,7 @@ public class ThermoIntegrationService implements RelayService {
 
         enabled = now.isAfter(START_TIME) && now.isBefore(END_TIME);
 
-        if (boilerMiddle < 42 && !(boilerMiddle > 40)) {
+        if (boilerMiddle < 45 && !(boilerMiddle > 43)) {
             status = "On";
             thermoIntegration.on();
         } else {
