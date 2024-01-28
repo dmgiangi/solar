@@ -1,6 +1,4 @@
 input:
-  digital:
-    fan-coil-switch: 2
   one-wire:
     addresses:
       solar-in: 28-000f98431502

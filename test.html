@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
     <title>Status Streaming with EventSource</title>
 </head>
@@ -27,7 +27,7 @@
 
     // Funzione per effettuare la chiamata all'endpoint utilizzando EventSource
     function fetchDataWithEventSource() {
-        const endpointUrl = 'http://solar.local:8080/status';
+        const endpointUrl = 'http://192.168.8.120:8080/status';
         const eventSource = new EventSource(endpointUrl);
 
         // Gestiamo gli eventi ricevuti dallo stream

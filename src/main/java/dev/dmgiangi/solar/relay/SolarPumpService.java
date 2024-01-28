@@ -23,10 +23,10 @@ public class SolarPumpService implements RelayService {
     public void compute() {
         double min = Double.min(probesService.getSolarIn(), probesService.getSolarOut());
         final Double boilerMiddle = probesService.getBoilerMiddle();
-        if (boilerMiddle + 5.0 < min) {
+        if (boilerMiddle + 6.0 < min) {
             status = "On";
             solarPump.on();
-        } else if (boilerMiddle > min) {
+        } else if (boilerMiddle + 2.0 > min) {
             status = "Off";
             solarPump.off();
         }

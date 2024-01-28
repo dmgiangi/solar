@@ -17,8 +17,7 @@
     <description>solar panel central control unit</description>
 
     <properties>
-        <java.version>11</java.version>
-        <pi4j.version>2.3.0</pi4j.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -37,12 +36,6 @@
 
         <!-- DEVELOPMENT UTILITY -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -53,12 +46,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -75,34 +62,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.3.2</version>
-                <configuration>
-                    <container>
-                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                    </container>
-                    <from>
-                        <image>giangi/rpi-base-image</image>
-                        <auth>
-                            <username>${docker-username}</username>
-                            <password>${docker-password}</password>
-                        </auth>
-                    </from>
-                    <to>
-                        <image>docker.io/giangi/${project.artifactId}</image>
-                        <auth>
-                            <username>${docker-username}</username>
-                            <password>${docker-password}</password>
-                        </auth>
-                        <tags>
-                            <tag>${project.version}</tag>
-                            <tag>latest</tag>
-                        </tags>
-                    </to>
                 </configuration>
             </plugin>
         </plugins>

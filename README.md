@@ -1,10 +1,13 @@
 # SOLAR
 
 ## Prerequisites
-The spring application take some time to start in order to set the state of the pin before it could initilize you can put the following line in /etc/rc.local before the line 'exit 0'
+
+The spring application take some time to start in order to set the state of the pin before it could initilize you can
+put the following line in /etc/rc.local **before the line 'exit 0'**
+
 ```shell
 echo 17 > /sys/class/gpio/export
-echo 'out' > /sys/class/gpio/gpio17/direction
+echo 'out' > /sys/class/gpio/gpio27/direction
 echo 1 > /sys/class/gpio/gpio17/active_low
 echo 0 >/sys/class/gpio/gpio17/value
 
@@ -46,64 +49,91 @@ echo 0 >/sys/class/gpio/gpio6/value
 echo 2 > /sys/class/gpio/export
 echo 'in' > /sys/class/gpio/gpio2/direction
 ```
+
 ### Install needed package
+
 you need to install some tool on rpi
 
 ```shell
-sudo curl -sL get.docker.com | bash
-sudo apt install python3-pip pigpio
-sudo pip install --system pigpio
+sudo apt install pigpio python3-pigpio redis-server openjdk-17-jre
 sudo systemctl enable pigpiod
 ```
 
 ### place the services on the filesystem
-Place the file in the following way (we assume that the home directory is /home/giangi).\
-Please consider to change the redis password from the docker compose found in thi project in the infrastructure folder
+
+Create the folder and the user needed for the system
+
+```shell
+sudo mkdir /data
+sudo chown root:root /data
+sudo chmod 755 /data
+sudo useradd -r -s /usr/sbin/nologin spring
+sudo usermod -a -G gpio spring
+sudo mkdir /data/spring
+sudo chown spring:spring /data/spring
+sudo chmod 755 /data/spring
+sudo mkdir /data/admin
+sudo chown solar:solar /data/admin
+sudo chmod 755 /data/admin
+sudo mkdir /data/redis
+sudo chown redis:redis /data/redis
+sudo chmod 755 /data/redis
+sudo systemctl enable redis-server
+sudo nano /etc/systemd/system/redis.service
+```
+
+and add the row
 
 ```text
-~/ _
-    |_ infrastructure/
-      |_ listener.py
-      |_ redis-data/
-      |_ docker.compose.yml
+ReadWritePaths=/data/redis
+```
+
+### Configure redis
+
+edit the redis configuration file and set
+
+```shell
+sudo nano /etc/redis/redis.conf
+```
+
+```text
+port 6579
+requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+dir /data/redis
 ```
 
 ### Create the systemd service starter
 
-Create a file named /etc/systemd/system/infrastructure.service with the command:
+Create a file named /etc/systemd/system/solar.service with the command:
 
 ```shell
-sudo nano /etc/systemd/system/infrastructure.service
+sudo nano /etc/systemd/system/solar.service
 ```
 
 with the following content:
 
 ```shell
 [Unit]
-Description=Pull up infrastructure
+Description=Solar services
 
 [Service]
-WorkingDirectory=/home/giangi/infrastructure
-ExecStart=/usr/bin/docker compose up
-User=root
+WorkingDirectory=/data/solar
+ExecStart=/usr/bin/java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /data/spring/solar.jar
+User=spring
 Type=simple
 Restart=on-failure
 RestartSec=10
+After=network.target
+Requires=redis.service
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-start and enable the services
-
-```shell
-sudo systemctl enable infrastructure
-sudo systemctl start infrastructure
-```
-
+**TODO: Try to remove the pytho gpio rest service and introduce diozero**\
 create a file named with:
 
- ```shell
+```shell
 sudo nano /etc/systemd/system/gpio_rest.service
 ```
 
@@ -115,7 +145,7 @@ Description=GPIO REST Script Service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/giangi/infrastructure/listener.py
+ExecStart=/usr/bin/python3 /data/admin/listener.py
 Restart=always
 RestartSec=10
 
@@ -126,6 +156,7 @@ WantedBy=multi-user.target
 start and enable the services
 
 ```shell
-sudo systemctl enable gpio_rest
-sudo systemctl start gpio_rest
+sudo systemctl daemon-reload
+sudo systemctl enable gpio_rest solar
+sudo systemctl start gpio_rest solar
 ```

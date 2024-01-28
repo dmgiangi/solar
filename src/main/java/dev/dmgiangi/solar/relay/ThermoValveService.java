@@ -23,10 +23,10 @@ public class ThermoValveService implements RelayService {
         Double thermoFirePlace = probesService.getThermoFirePlace();
         Double boilerMiddle = probesService.getBoilerMiddle();
 
-        if (boilerMiddle + 7 < thermoFirePlace) {
+        if (boilerMiddle < thermoFirePlace - 7) {
             thermoValve.on();
             status = "On";
-        } else if (boilerMiddle + 3 > thermoFirePlace) {
+        } else if (boilerMiddle > thermoFirePlace - 4) {
             thermoValve.off();
             status = "Off";
         }
